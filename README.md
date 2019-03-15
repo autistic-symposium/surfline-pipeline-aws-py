@@ -244,7 +244,7 @@ You can test this application flow in sandbox and/or staging environment followi
 2. Type the value for `body`, similarly as the a message created in `event.json`. For instance:
 
 ```
-{'clipId': '507f191e810c19729de860ea','retryTimestamps': [],'cameraId': '583499c4e411dc743a5d5296','startTimestampInMs': 1538412898000,'endTimestampInMs': 1538413498000}
+{'clipId': '111111111111','retryTimestamps': [],'cameraId': '111111111111','startTimestampInMs': 1538412898000,'endTimestampInMs': 1538413498000}
 ```
 
 1. This should trigger the lambda function and you should see the clips and thumbnails in the environment's S3 bucket in around 20-40 seconds.
@@ -256,7 +256,7 @@ Errors will be logged in [CloudWatch](https://us-west-1.console.aws.amazon.com/c
 For instance, to check error logs for staging in the last hour:
 
 ```bash
-saw get /aws/lambda/cameras-service-generate-clip-staging --start -1h --filter error
+saw get /aws/lambda/clip-function -1h --filter error
 ```
 
 ----
