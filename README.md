@@ -35,7 +35,6 @@ This application's goal is to retrieve camera rewind videos within two NTP UTC t
 
 # Introduction
 
-![](docs/lambda_diagram.png)
 
 As we see in this diagram, this application performs the following steps:
 
