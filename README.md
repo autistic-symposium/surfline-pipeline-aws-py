@@ -1,8 +1,9 @@
-# AWS Rewind Clip Generator
+# FFMPEG AWS LAMBDA FUNCTION
 
-This package provides a camera **rewind clip generator application** to be deployed as an AWS lambda function.
 
-This application's goal is to retrieve camera rewind videos within two NTP UTC timestamps, trimming them with FFMPEG, and delivering a final clip to the viewer.
+An AWS Lambda Function to trim videos served from an API endpoint, within two given NTP UTC timestamps. 
+
+The stack also uses SQS, SNS, and S3 resources.
 
 ----
 
