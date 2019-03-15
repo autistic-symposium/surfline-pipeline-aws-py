@@ -13,8 +13,6 @@ The stack also uses SQS, SNS, and S3 resources.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [AWS Rewind Clip Generator](#aws-rewind-clip-generator)
-- [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Running Locally](#running-locally)
     - [Create a virtual environment](#create-a-virtual-environment)
