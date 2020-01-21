@@ -1,4 +1,4 @@
-# 🎥 AWS Lambda Function to Trim Videos with FFMPEG 🎥
+# AWS Pipeline Videos with FFMPEG
 
 
 An AWS Lambda Function to trim videos served from an API endpoint, within two given NTP UTC timestamps. 
