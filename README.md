@@ -1,9 +1,13 @@
 # AWS Pipeline Videos with FFMPEG
 
+<br>
 
-An AWS Lambda Function to trim videos served from an API endpoint, within two given NTP UTC timestamps. 
+
+Full AWS Lambda Function to trim videos served from an API endpoint, within two given NTP UTC timestamps. 
 
 The stack also uses SQS, SNS, and S3 resources.
+
+<br>
 
 ----
 
