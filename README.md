@@ -1,4 +1,4 @@
-# AWS Pipeline Videos with FFMPEG
+# AWSvideo: Pipeline for FFMPEG video production
 
 <br>
 
