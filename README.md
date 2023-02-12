@@ -1,43 +1,18 @@
-# AWSvideo: Pipeline for FFMPEG video production
+## AWSvideo: Pipeline for FFMPEG video production
 
 <br>
 
 
-Full AWS Lambda Function to trim videos served from an API endpoint, within two given NTP UTC timestamps. 
+#### 👾 this repo contain one of the projects i am most proud of: a full AWS lambda + sqs+ sns + sns stack to trim videos served from an API endpoint, within two given NTP UTC timestamps. 
 
-The stack also uses SQS, SNS, and S3 resources.
 
 <br>
 
 ----
 
-# Table of Contents
+### Introduction
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Introduction](#introduction)
-- [Running Locally](#running-locally)
-    - [Create a virtual environment](#create-a-virtual-environment)
-    - [Configure the environment](#configure-the-environment)
-      - [Changes when moving to another environment](#changes-when-moving-to-another-environment)
-    - [Install the dependencies](#install-the-dependencies)
-    - [Create Sample SQS events](#create-sample-sqs-events)
-    - [Running the App locally](#running-the-app-locally)
-- [AWS Deploynment](#aws-deploynment)
-    - [Running the App as a Lambda Function](#running-the-app-as-a-lambda-function)
-    - [Testing the flow in AWS](#testing-the-flow-in-aws)
-    - [Debugging Errors](#debugging-errors)
-- [Contributing](#contributing)
-    - [Committing new code](#committing-new-code)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-----
-
-# Introduction
-
+<br>
 
 As we see in this diagram, this application performs the following steps:
 
@@ -116,9 +91,13 @@ Which would generate this response:
         }
 ```
 
+<br>
 
+----
 
-# Running Locally
+## Running Locally
+
+<br>
 
 To add new features to this application, follow these steps:
 
@@ -212,17 +191,19 @@ python scripts/create_test_event.py -o
 ```
 
 
-### Running the App locally
+#### Running the App locally
 
 ```bash
 make invoke
 ```
 
-
+<br>
 
 -----
 
-# AWS Deploynment
+## AWS Deploynment
+
+<br>
 
 ### Running the App as a Lambda Function
 
@@ -263,11 +244,13 @@ For instance, to check error logs for staging in the last hour:
 saw get /aws/lambda/clip-function -1h --filter error
 ```
 
+<br>
+
 ----
 
-# Contributing 
+### Contributing 
 
-### Committing new code
+<br>
 
 Run unit tests with:
 
