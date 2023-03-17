@@ -1,9 +1,17 @@
-## End-to-end pipeline for video edition on AWS SQS + Lambda + SNS
+## end-to-end messaging pipeline on aws
 
 <br>
 
 
-##### 👉 this repo contains one of the projects i am most proud of: a full AWS lambda + sqs + sns stack to trim videos served from an API endpoint, within two given NTP UTC timestamps. 
+##### 👉 this repo contains a project i am pretty proud of: an end-to-end pipeline leveraging aws [lambda](https://www.serverless.com/aws-lambda) + [sqs](https://aws.amazon.com/sqs/features/) + [sns](https://aws.amazon.com/sns/) + [s3](https://aws.amazon.com/s3/) for a feed that retrieves videos (within two given NTP UTC timestamps), edit, and serve them to an api endpoint.
+
+<br>
+
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/127235106/225798051-755e85cd-cd2b-4741-99f3-c9953b4975e1.png" width="80%" align="center" style="padding:1px;border:1px solid black;" />
+  
+
 
 
 <br>
