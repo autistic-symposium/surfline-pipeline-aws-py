@@ -4,6 +4,7 @@
 
 
 ##### 👉 this repo contains a project i am pretty proud of: an end-to-end pipeline leveraging aws [lambda](https://www.serverless.com/aws-lambda) + [sqs](https://aws.amazon.com/sqs/features/) + [sns](https://aws.amazon.com/sns/) + [s3](https://aws.amazon.com/s3/) for a feed that retrieves videos (within two given NTP UTC timestamps), edit, and serve them to an api endpoint.
+##### 📚 sns is a pub/sub system, while sqs is a queueing system. sns is used to send the same message to multiple consumers via topics, while each message in an sws queue is processed by only one consumer (in this case, the lambda function).
 
 <br>
 
