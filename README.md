@@ -1,22 +1,22 @@
-## AWSvideo: Pipeline for FFMPEG video production
+## End-to-end pipeline for video edition on AWS SQS + Lambda + SNS
 
 <br>
 
 
-#### 👾 this repo contain one of the projects i am most proud of: a full AWS lambda + sqs+ sns + sns stack to trim videos served from an API endpoint, within two given NTP UTC timestamps. 
+##### 👉 this repo contains one of the projects i am most proud of: a full AWS lambda + sqs + sns stack to trim videos served from an API endpoint, within two given NTP UTC timestamps. 
 
 
 <br>
 
 ----
 
-### Introduction
+### Summary
 
 <br>
 
-As we see in this diagram, this application performs the following steps:
+This application performs the following steps:
 
-1. Receive a SQS event requesting a clip for a given time interval. An example of SQS event is the follow:
+1. Receive a **SQS event** requesting a clip for a given time interval. An example of SQS event is the follow:
 
 ```json
         {
@@ -44,11 +44,9 @@ As we see in this diagram, this application performs the following steps:
  ```
 
 
-2. Call the camera API with the endpoint `/cameras/cameraID` to retrieve a camera alias for the given camera id.
+2. Call the a camera API with the endpoint `/cameras/cameraID` to retrieve a camera alias for the given camera id.
 
-3. Call the camera API with the endpoint `/cameras/recording/` to retrieve a list of cam rewind source files within the given time range. 
-
-Which would generate this response:
+3. Call a camera API with the endpoint `/cameras/recording/` to retrieve a list of cam rewind source files within the given time range. This is an example of response:
 
 ```json
         [{
@@ -61,13 +59,13 @@ Which would generate this response:
          }]
 ```
 
-4. Retrieve the cam rewind source files from the origin S3 bucket (downloading them on disk).
+4. Retrieve the cam rewind source files from the **origin S3 bucket** (downloading them to the Lambda function's available disk).
 
-5. Use ffmpeg to trim and merge clips into a single clip and to create several thumbnails.
+5. Leverage [ffmpeg](https://ffmpeg.org/) to trim and merge clips into a single clip and to create several thumbnails.
 
-6. If the clips are available, store them in the destination S3 bucket.
+6. If the clips are available, store them in the **destination S3 bucket**.
 
-7. If the clips are not available, send a SQS message back to the queue, similar to the initial SQS, with a visibility timeout.
+7. If the clips are not available, send a **SQS message back to the queue**, similar to the initial SQS, with a visibility timeout.
 
 8. Call the camera API with endpoint `/cameras/clips` to update the information about the new clip and send a SNS message with the resulting metadata. An example of SNS message:
 
@@ -95,27 +93,31 @@ Which would generate this response:
 
 ----
 
-## Running Locally
+### Running Locally
 
 <br>
 
 To add new features to this application, follow these steps:
 
-### Create a virtual environment
+#### Create a virtual environment
 
 ```bash
 virtualenv venv
 source venv/bin/activate
 ```
 
-### Configure the environment
+<br>
+
+#### Configure the environment
 
 ```bash
 cp .env.sample_{env} .env
 vim .env
 ```
 
-Where these are the global variables in this file:
+<br>
+
+These are the global variables in this file:
 
 | Constant               | Definition                                                                             |
 | :----------------------|:-------------------------------------------------------------------------------------- |
@@ -138,6 +140,7 @@ Where these are the global variables in this file:
 | SQS_TIMEOUT            | AWS SQS invisibility timeout in seconds                                                |
 
 
+<br>
 
 #### Changes when moving to another environment
 
@@ -153,13 +156,17 @@ Whenever you move among the environments (prod, sandbox, or staging), you need t
 | AWS_SQS_QUEUE_URL       |   https://sqs.test-sqs-{ENV}                        |
 
 
-### Install the dependencies
+<br>
+
+#### Install the dependencies
 
 ```bash
 make install
 ```
 
-### Create Sample SQS events
+<br>
+
+#### Create Sample SQS events
 
 To create an `event.json` file to be tested in this application, run:
 
@@ -190,6 +197,7 @@ python scripts/create_test_event.py -n
 python scripts/create_test_event.py -o
 ```
 
+<br>
 
 #### Running the App locally
 
@@ -201,11 +209,11 @@ make invoke
 
 -----
 
-## AWS Deploynment
+### AWS Deploynment
 
 <br>
 
-### Running the App as a Lambda Function
+#### Running the App as a Lambda Function
 
 This creates a `.zip` package and deploys it to the lambda function:
 
@@ -221,7 +229,14 @@ unzip -l dist/cameras-service-generate-clip.zip
 
 Note that this adds FFMPEG's dependencies manually and the Python dependencies are built within a Dockerfile.
 
-### Testing the flow in AWS
+
+<br>
+
+
+
+#### Testing the flow in AWS
+
+<br>
 
 You can test this application flow in sandbox and/or staging environment following theses steps:
 
@@ -234,7 +249,13 @@ You can test this application flow in sandbox and/or staging environment followi
 
 1. This should trigger the lambda function and you should see the clips and thumbnails in the environment's S3 bucket in around 20-40 seconds.
 
-### Debugging Errors
+<br>
+
+
+
+#### Debugging Errors
+
+<br>
 
 Errors will be logged in [CloudWatch](https://us-west-1.console.aws.amazon.com/cloudwatch/home?region=us-west-1#logs:). To make sense of logs in the CLI, you should install [saw](https://github.com/TylerBrock/saw).
 
@@ -248,7 +269,7 @@ saw get /aws/lambda/clip-function -1h --filter error
 
 ----
 
-### Contributing 
+### Developing 
 
 <br>
 
