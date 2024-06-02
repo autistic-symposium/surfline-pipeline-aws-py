@@ -1,9 +1,10 @@
-## end-to-end messaging pipeline on aws
+## Surfline Sesh v1
 
 <br>
 
 
-##### 👉 this repo contains a project i am pretty proud of: an end-to-end pipeline leveraging aws [lambda](https://www.serverless.com/aws-lambda) + [sqs](https://aws.amazon.com/sqs/features/) + [sns](https://aws.amazon.com/sns/) + [s3](https://aws.amazon.com/s3/) for a feed that retrieves videos (within two given NTP UTC timestamps), edit, and serve them to an api endpoint.
+##### 👾 this repo contains a project i am pretty proud of, the first version of **[Surfline Session's](https://www.surfline.com/lp/sessions)**, a high-impactful mass-adopted product i built from scratch, while working at their sweet office at huntington beach.
+##### 👉 it's basically an end-to-end pipeline leveraging aws [lambda](https://www.serverless.com/aws-lambda) + [sqs](https://aws.amazon.com/sqs/features/) + [sns](https://aws.amazon.com/sns/) + [s3](https://aws.amazon.com/s3/) for a feed that retrieves videos (within two given NTP UTC timestamps), edit, and serve them to an api endpoint.
 ##### 📚 sns is a pub/sub system, while sqs is a queueing system. sns is used to send the same message to multiple consumers via topics, while each message in an sqs queue is processed by only one consumer (in this case, the lambda function).
 
 <br>
