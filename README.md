@@ -1,44 +1,24 @@
-# AWS Rewind Clip Generator
+## surfline sesh v1: E2E distributed pipeline to extract and process surfing videos 
 
-This package provides a camera **rewind clip generator application** to be deployed as an AWS lambda function.
+<br>
+<p align="center">
+<img src="https://user-images.githubusercontent.com/127235106/225798051-755e85cd-cd2b-4741-99f3-c9953b4975e1.png" width="70%" align="center" style="padding:1px;border:1px solid black;" />
+</p>
+<br>
 
-This application's goal is to retrieve camera rewind videos within two NTP UTC timestamps, trimming them with FFMPEG, and delivering a final clip to the viewer.
+##### 👉 this repo contains a project i am pretty proud of, the first version of **[surfline session's](https://www.surfline.com/lp/sessions)**, a high-impactful mass-adopted product i built from scratch, while working from their sweet office at huntington beach
+##### 👉 it's basically an end-to-end pipeline leveraging aws **[lambda](https://www.serverless.com/aws-lambda)** + **[sqs](https://aws.amazon.com/sqs/features/)** + **[sns](https://aws.amazon.com/sns/)** + **[s3](https://aws.amazon.com/s3/)** for a feed that retrieves videos (within two given NTP UTC timestamps), edit, and serve them to an api endpoint
+##### 👉 sns is a pub/sub system, while sqs is a queueing system. sns is used to send the same message to multiple consumers via topics, while each message in an sqs queue is processed by only one consumer (in this case, the lambda function)
 
-----
-
-# Table of Contents
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [AWS Rewind Clip Generator](#aws-rewind-clip-generator)
-- [Table of Contents](#table-of-contents)
-- [Introduction](#introduction)
-- [Running Locally](#running-locally)
-    - [Create a virtual environment](#create-a-virtual-environment)
-    - [Configure the environment](#configure-the-environment)
-      - [Changes when moving to another environment](#changes-when-moving-to-another-environment)
-    - [Install the dependencies](#install-the-dependencies)
-    - [Create Sample SQS events](#create-sample-sqs-events)
-    - [Running the App locally](#running-the-app-locally)
-- [AWS Deploynment](#aws-deploynment)
-    - [Running the App as a Lambda Function](#running-the-app-as-a-lambda-function)
-    - [Testing the flow in AWS](#testing-the-flow-in-aws)
-    - [Debugging Errors](#debugging-errors)
-- [Contributing](#contributing)
-    - [Committing new code](#committing-new-code)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<br>
 
 ----
 
-# Introduction
+### summary of this application
 
+<br>
 
-As we see in this diagram, this application performs the following steps:
-
-1. Receive a SQS event requesting a clip for a given time interval. An example of SQS event is the follow:
+1. receive a **SQS event** requesting a clip for a given time interval. an example of SQS event is the follow:
 
 ```json
         {
@@ -66,11 +46,9 @@ As we see in this diagram, this application performs the following steps:
  ```
 
 
-2. Call the camera API with the endpoint `/cameras/cameraID` to retrieve a camera alias for the given camera id.
+2. call the a camera API with the endpoint `/cameras/cameraID` to retrieve a camera alias for the given camera id
 
-3. Call the camera API with the endpoint `/cameras/recording/` to retrieve a list of cam rewind source files within the given time range. 
-
-Which would generate this response:
+3. call a camera API with the endpoint `/cameras/recording/` to retrieve a list of cam rewind source files within the given time range. this is an example of response:
 
 ```json
         [{
@@ -83,15 +61,15 @@ Which would generate this response:
          }]
 ```
 
-4. Retrieve the cam rewind source files from the origin S3 bucket (downloading them on disk).
+4. retrieve the cam rewind source files from the **origin S3 bucket** (downloading them to the lambda function's available disk)
 
-5. Use ffmpeg to trim and merge clips into a single clip and to create several thumbnails.
+5. leverage **[ffmpeg](https://ffmpeg.org/)** to trim and merge clips into a single clip and to create several thumbnails
 
-6. If the clips are available, store them in the destination S3 bucket.
+6. if the clips are available, store them in the **destination S3 bucket**
 
-7. If the clips are not available, send a SQS message back to the queue, similar to the initial SQS, with a visibility timeout.
+7. if the clips are not available, send a **SQS message back to the queue**, similar to the initial SQS, with a visibility timeout
 
-8. Call the camera API with endpoint `/cameras/clips` to update the information about the new clip and send a SNS message with the resulting metadata. An example of SNS message:
+8. call the camera API with endpoint `/cameras/clips` to update the information about the new clip and send a SNS message with the resulting metadata. an example of SNS message:
 
 ```json
        { 
@@ -113,27 +91,32 @@ Which would generate this response:
         }
 ```
 
+<br>
 
+----
 
-# Running Locally
+### running Locally
 
-To add new features to this application, follow these steps:
+<br>
 
-### Create a virtual environment
+* create a virtual environment and install:
 
 ```bash
 virtualenv venv
 source venv/bin/activate
+make install
 ```
 
-### Configure the environment
+* configure the environment:
 
 ```bash
 cp .env.sample_{env} .env
 vim .env
 ```
 
-Where these are the global variables in this file:
+* these are the global variables in this file:
+
+<br>
 
 | Constant               | Definition                                                                             |
 | :----------------------|:-------------------------------------------------------------------------------------- |
@@ -156,10 +139,15 @@ Where these are the global variables in this file:
 | SQS_TIMEOUT            | AWS SQS invisibility timeout in seconds                                                |
 
 
+<br>
 
-#### Changes when moving to another environment
+---
 
-Whenever you move among the environments (prod, sandbox, or staging), you need to change the following variables:
+### changes when moving to another environment
+
+<br>
+
+* whenever you move among the environments (prod, sandbox, or staging), you need to change the following variables:
 
 
 | Constant                | Possible value                                      |
@@ -171,120 +159,140 @@ Whenever you move among the environments (prod, sandbox, or staging), you need t
 | AWS_SQS_QUEUE_URL       |   https://sqs.test-sqs-{ENV}                        |
 
 
-### Install the dependencies
+<br>
 
-```bash
-make install
-```
+#### create sample SQS events
 
-### Create Sample SQS events
+<br>
 
-To create an `event.json` file to be tested in this application, run:
+* to create an `event.json` file to be tested in this application, run:
 
 ```bash
 make event
 ```
 
-Note that this command runs `./scripts/create_test_event.py` considering that the camera `test` is up. In case it is down, you should add a valid camera to the global variables section in that script.
+* note that this command runs `./scripts/create_test_event.py` considering that the camera `test` is up. in case it is down, you should add a valid camera to the global variables section in that script
 
-You can create testing `event.json` to test alternate flows such as:
+* you can create testing `event.json` to test alternate flows such as:
 
-* **Clip pending** (i.e. when the requested clip is within 15 minutes to the SQS message timestamp but it was not created yet):
+* **clip pending** (i.e., when the requested clip is within 15 minutes to the SQS message timestamp but it was not created yet):
 
 ```bash
 python scripts/create_test_event.py -p
 ```
 
-* **Clip not available** (i.e. when the requested clip is later than 15 minutes but within 3 days to the SQS message timestamp):
+* **clip not available** (i.e., when the requested clip is later than 15 minutes but within 3 days to the SQS message timestamp):
 
 ```bash
 python scripts/create_test_event.py -n
 ```
 
-* **Clip out of range** (i.e. when the requested clip is later than 3 days to the SQS message timestamp):
+* **clip out of range** (i.e., when the requested clip is later than 3 days to the SQS message timestamp):
 
 ```bash
 
 python scripts/create_test_event.py -o
 ```
 
+<br>
 
-### Running the App locally
+----
+
+### running the app locally
+
+<br>
 
 ```bash
 make invoke
 ```
 
-
+<br>
 
 -----
 
-# AWS Deploynment
+### aws deploynment
 
-### Running the App as a Lambda Function
+<br>
 
-This creates a `.zip` package and deploys it to the lambda function:
+#### running the app as a lambda function
+
+<br>
+
+* this creates a `.zip` package and deploys it to the lambda function:
 
 ```bash
 make deploy
 ```
 
-Check whether the package has the expected content:
+* check whether the package has the expected content:
 
 ```bash
 unzip -l dist/cameras-service-generate-clip.zip
 ```
 
-Note that this adds FFMPEG's dependencies manually and the Python dependencies are built within a Dockerfile.
+* note that this adds FFMPEG's dependencies manually and the python dependencies are built within a dockerfile
 
-### Testing the flow in AWS
 
-You can test this application flow in sandbox and/or staging environment following theses steps:
+<br>
 
-1. In the [SQS dashboard](https://console.aws.amazon.com/sqs/home?region=us-west-1), select SQS queue and click `Queue action -> Send a Message`.
-2. Type the value for `body`, similarly as the a message created in `event.json`. For instance:
+#### checking the flow at AWS
+
+<br>
+
+* you can test this application flow in sandbox and/or staging environment following theses steps:
+
+1. in the **[SQS dashboard](https://console.aws.amazon.com/sqs/home?region=us-west-1)**, select SQS queue and click `Queue action -> Send a Message`
+2. type the value for `body`, similarly as the a message created in `event.json`, for instance:
 
 ```
-{'clipId': '507f191e810c19729de860ea','retryTimestamps': [],'cameraId': '583499c4e411dc743a5d5296','startTimestampInMs': 1538412898000,'endTimestampInMs': 1538413498000}
+{'clipId': '111111111111','retryTimestamps': [],'cameraId': '111111111111','startTimestampInMs': 1538412898000,'endTimestampInMs': 1538413498000}
 ```
 
-1. This should trigger the lambda function and you should see the clips and thumbnails in the environment's S3 bucket in around 20-40 seconds.
+3. this should trigger the lambda function and you should see the clips and thumbnails in the environment's S3 bucket in around 20-40 seconds
 
-### Debugging Errors
+<br>
 
-Errors will be logged in [CloudWatch](https://us-west-1.console.aws.amazon.com/cloudwatch/home?region=us-west-1#logs:). To make sense of logs in the CLI, you should install [saw](https://github.com/TylerBrock/saw).
+-----
 
-For instance, to check error logs for staging in the last hour:
+### debugging errors
+
+<br>
+
+* errors will be logged in **[CloudWatch](https://us-west-1.console.aws.amazon.com/cloudwatch/home?region=us-west-1#logs:)**
+* to make sense of logs in the CLI, you should install **[saw](https://github.com/TylerBrock/saw)**
+* for instance, to check error logs for staging in the last hour:
 
 ```bash
-saw get /aws/lambda/cameras-service-generate-clip-staging --start -1h --filter error
+saw get /aws/lambda/clip-function -1h --filter error
 ```
+
+<br>
 
 ----
 
-# Contributing 
+### developing 
 
-### Committing new code
+<br>
 
-Run unit tests with:
+* run unit tests with:
 
 ```bash
 make test
 ```
 
-When deploying scripts (or to report back to Github on PRs), we ensure that code follows style guidelines with:
+* when deploying scripts (or to report back to github on PRs), we ensure that code follows style guidelines with:
 
 ```bash
 make lint
 ```
 
-To fix lint errors, use:
+* to fix lint errors, use:
 
 ```bash
 make fixlint
 ```
 
-Update the documentation (README.md) with:
+* update the documentation (`README.md`) with:
 
 ```bash
 make doctoc

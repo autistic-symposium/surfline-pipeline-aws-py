@@ -1,6 +1,6 @@
 boto3==1.4.4
 botocore==1.5.62
-certifi==2018.8.24
+certifi==2023.7.22
 chardet==3.0.4
 click==6.6
 docutils==0.12
@@ -12,15 +12,15 @@ python-dateutil==2.5.3
 python-dotenv==0.9.1
 python-lambda==3.2.2
 PyYAML==3.11
-requests==2.19.1
+requests==2.20.0
 s3transfer==0.1.13
 six==1.10.0
-urllib3==1.23
+urllib3==1.26.18
 autopep8==1.4
 appdirs==1.4.3
 packaging==16.8
 pep8==1.7.0
-py==1.4.33
+py==1.10.0
 pyaml==15.8.2
 pyparsing==2.2.0
 pytest==3.0.7
